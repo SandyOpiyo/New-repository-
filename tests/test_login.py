@@ -1,18 +1,30 @@
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-def test_login():
+def test_valid_login():
     driver = webdriver.Chrome()
-    driver.get("https://example.com/login")
+    driver.get("https://www.saucedemo.com")
 
-    username = driver.find_element(By.ID, "username")
-    password = driver.find_element(By.ID, "password")
+    driver.find_element(By.ID, "user-name").send_keys("standard_user")
+    driver.find_element(By.ID, "password").send_keys("secret_sauce")
+    driver.find_element(By.ID, "login-button").click()
 
-    username.send_keys("testuser")
-    password.send_keys("password123")
+    assert "inventory" in driver.current_url
 
-    driver.find_element(By.ID, "login").click()
+    driver.quit()
 
-    assert "dashboard" in driver.current_url
+
+def test_invalid_login():
+    driver = webdriver.Chrome()
+    driver.get("https://www.saucedemo.com")
+
+    driver.find_element(By.ID, "user-name").send_keys("wrong")
+    driver.find_element(By.ID, "password").send_keys("wrong")
+    driver.find_element(By.ID, "login-button").click()
+
+    error = driver.find_element(By.CLASS_NAME, "error-message-container").text
+
+    assert "Epic sadface" in error
 
     driver.quit()
